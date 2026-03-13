@@ -8,18 +8,29 @@ Advanced Programming OOP assignment: C++ Smart Home Ecosystem that controls ligh
 ---
 
 ## Table of Contents
-1. [Overview](#overview)
-2. [Features](#features)
-3. [Class Hierarchy](#class-hierarchy)
-4. [Requirements Met](#requirements-met)
-5. [Setup Instructions](#setup-instructions)
-6. [Usage Guide](#usage-guide)
-7. [Code Structure](#code-structure)
-8. [Error Handling](#error-handling)
-9. [Sample Output](#sample-output)
-10. [Troubleshooting](#troubleshooting)
-11. [References](#references)
+1. [Group F](#group-F)
+2. [Overview](#overview)
+3. [Features](#features)
+4. [Class Hierarchy](#class-hierarchy)
+5. [Requirements Met](#requirements-met)
+6. [Setup Instructions](#setup-instructions)
+7. [Usage Guide](#usage-guide)
+8. [Code Structure](#code-structure)
+9. [Error Handling](#error-handling)
+10. [Sample Output](#sample-output)
+11. [Troubleshooting](#troubleshooting)
+12. [References](#references)
 
+---
+
+## group-F
+220115085 Sandile Sibeko
+221152725 Mongiwethu Eddy Ncube 
+220068905 Keamogetse Selebano
+220122253 Ndzulamo Michelle Yingwani 
+220080694 Hlonipho Nersely Bila
+220061777 Zizile Ezona Mbanqi 
+219027546 Bongane Sithole
 ---
 
 ## Overview
