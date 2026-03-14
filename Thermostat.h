@@ -5,21 +5,16 @@
 
 class Thermostat : public SmartDevice {
 private:
-    int temperature; // in celsius
+    int temperature;
 
 public:
     Thermostat(string n) : SmartDevice(n, "THERMOSTAT") {
-        temperature = 22; // room temperature default
+        temperature = 22;
     }
 
-    void turnOn() {
-        SmartDevice::turnOn();
-        cout << "   Current temp: " << temperature << "°C" << endl;
-    }
-
-    string getStatus() override {
+    string getStatus() {
         string status = SmartDevice::getStatus();
-        status += ", Temperature: " + to_string(temperature) + "°C";
+        status += ", Temp: " + to_string(temperature) + "C";
         return status;
     }
 
@@ -29,11 +24,11 @@ public:
 
     void adjust(int value) {
         if (value < 10 || value > 35) {
-            cout << "[WARNING] Temperature must be 10-35°C!" << endl;
+            cout << "Temp must be 10-35C" << endl;
             return;
         }
         temperature = value;
-        cout << "Temperature set to " << temperature << "°C" << endl;
+        cout << "Temp now " << temperature << "C" << endl;
     }
 };
 
