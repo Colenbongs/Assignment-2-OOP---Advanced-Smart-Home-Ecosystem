@@ -15,9 +15,10 @@ using namespace std;
 			temperature = 22.0;
 		}
 
-		void setTemp(float temp) {
+		
+		void setTemp(int temp) {
 			temperature = temp;
-			cout << name << "temperature set to" << temperature << "°C"  << endl;
+			cout << name << "temperature set to" << temperature << endl;
 		}
 
         void showStatus() {
