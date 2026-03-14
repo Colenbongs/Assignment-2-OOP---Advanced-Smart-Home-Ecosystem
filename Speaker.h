@@ -5,11 +5,11 @@
 
 class Speaker : public SmartDevice {
 private:
-    int volume;
+    int volume; // 0 to 100
 
 public:
     Speaker(string n) : SmartDevice(n, "SPEAKER") {
-        volume = 50;
+        volume = 50; // medium volume default
     }
 
     void turnOn() {
@@ -17,14 +17,19 @@ public:
         cout << "   Volume: " << volume << "%" << endl;
     }
 
+    string getStatus() override {
+        string status = SmartDevice::getStatus();
+        status += ", Volume: " + to_string(volume) + "%";
+        return status;
+    }
+
     void showStatus() {
-        SmartDevice::showStatus();
-        cout << ", Volume: " << volume << "%" << endl;
+        cout << getStatus() << endl;
     }
 
     void adjust(int value) {
         if (value < 0 || value > 100) {
-            cout << "\x1B[31m[WARNING] Volume must be 0-100!\x1B[0m" << endl;
+            cout << "[WARNING] Volume must be 0-100!" << endl;
             return;
         }
         volume = value;
