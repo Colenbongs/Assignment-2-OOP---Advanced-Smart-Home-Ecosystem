@@ -25,12 +25,19 @@ Advanced Programming OOP assignment: C++ Smart Home Ecosystem that controls ligh
 
 ## group-F
 220115085 Sandile Sibeko
+
 221152725 Mongiwethu Eddy Ncube 
+
 220068905 Keamogetse Selebano
+
 220122253 Ndzulamo Michelle Yingwani 
+
 220080694 Hlonipho Nersely Bila
+
 220061777 Zizile Ezona Mbanqi 
+
 219027546 Bongane Sithole
+
 ---
 
 ## Overview
