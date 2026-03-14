@@ -5,7 +5,7 @@
 
 class Light : public SmartDevice {
 private:
-    int brightness; // 0 to 100
+    int brightness;
 
 public:
     Light(string n) : SmartDevice(n, "LIGHT") {
@@ -14,8 +14,8 @@ public:
 
     void turnOn() {
         SmartDevice::turnOn();
-        brightness = 100; // default when turned on
-        cout << "   Brightness set to " << brightness << "%" << endl;
+        brightness = 100;
+        cout << "   Brightness: " << brightness << "%" << endl;
     }
 
     void turnOff() {
@@ -23,7 +23,7 @@ public:
         brightness = 0;
     }
 
-    string getStatus() override {
+    string getStatus() {
         string status = SmartDevice::getStatus();
         status += ", Brightness: " + to_string(brightness) + "%";
         return status;
@@ -35,11 +35,11 @@ public:
 
     void adjust(int value) {
         if (value < 0 || value > 100) {
-            cout << "[WARNING] Brightness must be 0-100!" << endl;
+            cout << "Brightness must be 0-100" << endl;
             return;
         }
         brightness = value;
-        cout << "Brightness adjusted to " << brightness << "%" << endl;
+        cout << "Brightness now " << brightness << "%" << endl;
     }
 };
 
