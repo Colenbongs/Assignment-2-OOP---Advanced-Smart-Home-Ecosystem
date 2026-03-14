@@ -8,44 +8,30 @@ private:
     bool recording;
 
 public:
-    // Constructor initializes name via base class and sets recording to false
-    Camera(string name) : SmartDevice(name), recording(false) {}
-
-    // Required by assignment: Toggle recording status [cite: 33, 68]
-    void startRecord() {
-        if (isOn) {
-            recording = true;
-            cout << "Camera [" << name << "] started recording." << endl;
-        } else {
-            cout << "Error: Cannot record. Camera [" << name << "] is OFF." << endl;
-        }
-    }
-
-    void stopRecord() {
+    Camera(string n) : SmartDevice(n, "CAMERA") {
         recording = false;
-        cout << "Camera [" << name << "] stopped recording." << endl;
     }
 
-    string getStatus() override {
-        string powerStatus = isOn ? "ON" : "OFF";
-        string recordStatus = recording ? "RECORDING" : "IDLE";
-        return "Power: " + powerStatus + " | Status: " + recordStatus;
+    void turnOn() {
+        SmartDevice::turnOn();
+        recording = true;
+        cout << "   Camera recording" << endl;
     }
 
-    // Helper for your main.cpp to identify device type
-    string getType() override {
-        return "CAMERA";
-    }
-
-    // Override turnOff to ensure recording stops when power is cut
-    void turnOff() override {
+    void turnOff() {
         SmartDevice::turnOff();
         recording = false;
     }
 
-    // Assignment specifies cameras cannot be "adjusted" 
-    void adjust(int value) override {
-        cout << "[REJECTED] Security Cameras cannot be adjusted via value." << endl;
+    string getStatus() {
+        string status = SmartDevice::getStatus();
+        if (recording) status += ", Recording: YES";
+        else status += ", Recording: NO";
+        return status;
+    }
+
+    void showStatus() {
+        cout << getStatus() << endl;
     }
 };
 
