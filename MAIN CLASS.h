@@ -1,8 +1,8 @@
-﻿#include <iostream>
+#include <iostream>
 #include <vector>
 #include <string>
-#include <conio.h> // for _getch()
-#include <windows.h> // for SetConsoleTextAttribute
+#include <conio.h> // for _getch() - waits for key press
+#include <windows.h> // for SetConsoleTextAttribute - colors text
 using namespace std;
 
 #include "SmartDevice.h"
@@ -12,33 +12,36 @@ using namespace std;
 #include "Camera.h"
 #include "Room.h"
 
-// Function to set console color
+// === HELPER FUNCTIONS FOR DISPLAY ===
+// These functions make the program look nice and consistent
+
+// Changes text color in console
 void setColor(int color) {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, color);
 }
 
-// Color constants
-const int COLOR_GREEN = 10;
-const int COLOR_YELLOW = 14;
-const int COLOR_RED = 12;
-const int COLOR_WHITE = 7;
-const int COLOR_CYAN = 11;
+// Color codes for easy reference
+const int COLOR_GREEN = 10;   // Success messages
+const int COLOR_YELLOW = 14;  // Prompts and menus  
+const int COLOR_RED = 12;     // Error messages
+const int COLOR_WHITE = 7;    // Normal text
+const int COLOR_CYAN = 11;    // Device lists
 
-// Function to clear screen
+// Clears the screen for a fresh menu
 void clearScreen() {
     system("cls");
 }
 
-// Function to pause and wait for key press
+// Pauses until user presses a key
 void pressAnyKey() {
     setColor(COLOR_YELLOW);
     cout << "\nPress any key to continue...";
     setColor(COLOR_WHITE);
-    _getch();
+    _getch(); // Waits for key press
 }
 
-// Helper function to display rooms with numbers (prompts in yellow)
+// Shows all rooms with numbers
 void displayRooms(vector<Room*>& rooms) {
     setColor(COLOR_YELLOW);
     cout << "\nAvailable rooms:" << endl;
@@ -48,7 +51,7 @@ void displayRooms(vector<Room*>& rooms) {
     }
 }
 
-// Helper function to display devices in a room with numbers
+// Shows all devices in a room with numbers
 void displayDevicesInRoom(Room* room) {
     setColor(COLOR_CYAN);
     cout << "\nDevices in " << room->getName() << ":" << endl;
@@ -56,31 +59,33 @@ void displayDevicesInRoom(Room* room) {
     vector<SmartDevice*>& devices = room->getDevices();
     for (int i = 0; i < devices.size(); i++) {
         cout << "   " << (i + 1) << ". ";
-        devices[i]->showStatus();
+        devices[i]->showStatus(); // Shows device name and if it's ON/OFF
     }
 }
 
 int main() {
-    vector<Room*> rooms;
-    int choice;
+    vector<Room*> rooms; // Stores all rooms in the house
+    int choice; // User's menu choice
 
-    // Create some initial rooms
+    // === SETUP: Create starting rooms and devices ===
     rooms.push_back(new Room("Living Room"));
     rooms.push_back(new Room("Bedroom"));
     rooms.push_back(new Room("Kitchen"));
 
-    // Add some initial devices
+    // Add devices to Living Room
     rooms[0]->addDevice(new Light("Ceiling Light"));
     rooms[0]->addDevice(new Speaker("Smart Speaker"));
     rooms[0]->addDevice(new Camera("Front Camera"));
 
+    // Add devices to Bedroom
     rooms[1]->addDevice(new Light("Bedside Lamp"));
     rooms[1]->addDevice(new Thermostat("Room Thermostat"));
 
+    // Add devices to Kitchen
     rooms[2]->addDevice(new Light("Kitchen Light"));
     rooms[2]->addDevice(new Camera("Back Camera"));
 
-    // Show success message for initialization
+    // Welcome message
     setColor(COLOR_GREEN);
     cout << "======================================" << endl;
     cout << "    Smart Home System Initialized" << endl;
@@ -89,13 +94,17 @@ int main() {
     setColor(COLOR_WHITE);
     pressAnyKey();
 
+    // === MAIN PROGRAM LOOP ===
+    // Keeps showing menu until user chooses Exit (9)
     do {
         clearScreen();
-        setColor(COLOR_GREEN); // Green for header
+        
+        // Display main menu
+        setColor(COLOR_GREEN);
         cout << "======================================" << endl;
         cout << "    SMART HOME CONTROL SYSTEM" << endl;
         cout << "======================================" << endl;
-        setColor(COLOR_YELLOW); // Yellow for menu options
+        setColor(COLOR_YELLOW);
 
         cout << "\n1. View all devices" << endl;
         cout << "2. Turn device ON/OFF" << endl;
@@ -112,22 +121,26 @@ int main() {
         setColor(COLOR_WHITE);
         cin >> choice;
 
-        switch (choice) {
-        case 1: { // View all devices
+        // === MENU OPTIONS ===
+        
+        // OPTION 1: View all devices in all rooms
+        if (choice == 1) {
             clearScreen();
             setColor(COLOR_GREEN);
             cout << "\n=== ALL DEVICES ===" << endl;
             setColor(COLOR_WHITE);
+            // Loop through each room and show its devices
             for (auto room : rooms) {
                 room->showDevices();
             }
             pressAnyKey();
-            break;
         }
 
-        case 2: { // Turn device ON/OFF
+        // OPTION 2: Turn a specific device ON or OFF
+        else if (choice == 2) {
             clearScreen();
 
+            // Check if there are any rooms
             if (rooms.empty()) {
                 setColor(COLOR_RED);
                 cout << "\n[ERROR] No rooms available!" << endl;
@@ -136,15 +149,15 @@ int main() {
                 break;
             }
 
-            // Display rooms with numbers
+            // Step 1: Select room
             displayRooms(rooms);
-
             setColor(COLOR_YELLOW);
             cout << "\nSelect room number: ";
             setColor(COLOR_WHITE);
             int roomChoice;
             cin >> roomChoice;
 
+            // Validate room selection
             if (roomChoice < 1 || roomChoice > rooms.size()) {
                 setColor(COLOR_RED);
                 cout << "\n[ERROR] Invalid room number!" << endl;
@@ -164,15 +177,15 @@ int main() {
                 break;
             }
 
-            // Display devices in selected room
+            // Step 2: Select device
             displayDevicesInRoom(targetRoom);
-
             setColor(COLOR_YELLOW);
             cout << "\nSelect device number: ";
             setColor(COLOR_WHITE);
             int deviceChoice;
             cin >> deviceChoice;
 
+            // Validate device selection
             if (deviceChoice < 1 || deviceChoice > targetRoom->getDevices().size()) {
                 setColor(COLOR_RED);
                 cout << "\n[ERROR] Invalid device number!" << endl;
@@ -181,8 +194,8 @@ int main() {
                 break;
             }
 
+            // Step 3: Choose ON or OFF
             SmartDevice* device = targetRoom->getDevices()[deviceChoice - 1];
-
             setColor(COLOR_YELLOW);
             cout << "\n1. Turn ON" << endl;
             cout << "2. Turn OFF" << endl;
@@ -191,42 +204,39 @@ int main() {
             int onOff;
             cin >> onOff;
 
+            // Step 4: Apply the action
             cout << "\n";
             if (onOff == 1) {
                 device->turnOn();
                 setColor(COLOR_GREEN);
                 cout << "[SAVED] Device state updated" << endl;
-                setColor(COLOR_WHITE);
             }
             else if (onOff == 2) {
                 device->turnOff();
                 setColor(COLOR_GREEN);
                 cout << "[SAVED] Device state updated" << endl;
-                setColor(COLOR_WHITE);
             }
             else {
                 setColor(COLOR_RED);
                 cout << "[ERROR] Invalid choice!" << endl;
-                setColor(COLOR_WHITE);
             }
+            setColor(COLOR_WHITE);
             pressAnyKey();
-            break;
         }
 
-        case 3: { // Adjust device
+        // OPTION 3: Adjust device settings (brightness, temperature, volume)
+        else if (choice == 3) {
             clearScreen();
 
             if (rooms.empty()) {
                 setColor(COLOR_RED);
                 cout << "\n[ERROR] No rooms available!" << endl;
-                setColor(COLOR_WHITE);
                 pressAnyKey();
                 break;
             }
 
-            // Display rooms with numbers
+            // Select room (same as above)
             displayRooms(rooms);
-
             setColor(COLOR_YELLOW);
             cout << "\nSelect room number: ";
             setColor(COLOR_WHITE);
@@ -236,25 +246,21 @@ int main() {
             if (roomChoice < 1 || roomChoice > rooms.size()) {
                 setColor(COLOR_RED);
                 cout << "\n[ERROR] Invalid room number!" << endl;
-                setColor(COLOR_WHITE);
                 pressAnyKey();
                 break;
             }
 
             Room* targetRoom = rooms[roomChoice - 1];
 
-            // Check if room has devices
             if (targetRoom->getDevices().empty()) {
                 setColor(COLOR_RED);
                 cout << "\n[ERROR] No devices in this room!" << endl;
-                setColor(COLOR_WHITE);
                 pressAnyKey();
                 break;
             }
 
-            // Display devices in selected room
+            // Select device
             displayDevicesInRoom(targetRoom);
-
             setColor(COLOR_YELLOW);
             cout << "\nSelect device number: ";
             setColor(COLOR_WHITE);
@@ -264,22 +270,21 @@ int main() {
             if (deviceChoice < 1 || deviceChoice > targetRoom->getDevices().size()) {
                 setColor(COLOR_RED);
                 cout << "\n[ERROR] Invalid device number!" << endl;
-                setColor(COLOR_WHITE);
                 pressAnyKey();
                 break;
             }
 
             SmartDevice* device = targetRoom->getDevices()[deviceChoice - 1];
 
-            // Check if device can be adjusted (Camera can't)
+            // Cameras cannot be adjusted (they only record)
             if (device->getType() == "CAMERA") {
                 setColor(COLOR_RED);
                 cout << "\n[ERROR] Cameras cannot be adjusted!" << endl;
-                setColor(COLOR_WHITE);
                 pressAnyKey();
                 break;
             }
 
+            // Get adjustment value from user
             setColor(COLOR_YELLOW);
             cout << "\nEnter adjustment value: ";
             setColor(COLOR_WHITE);
@@ -287,28 +292,25 @@ int main() {
             cin >> value;
 
             cout << "\n";
-            device->adjust(value);
+            device->adjust(value); // Each device type adjusts differently
             setColor(COLOR_GREEN);
             cout << "[SAVED] Device settings updated" << endl;
-            setColor(COLOR_WHITE);
             pressAnyKey();
-            break;
         }
 
-        case 4: { // Add new device
+        // OPTION 4: Add a new device to a room
+        else if (choice == 4) {
             clearScreen();
 
             if (rooms.empty()) {
                 setColor(COLOR_RED);
                 cout << "\n[ERROR] No rooms available! Please add a room first." << endl;
-                setColor(COLOR_WHITE);
                 pressAnyKey();
                 break;
             }
 
-            // Display rooms with numbers
+            // Select room to add device to
             displayRooms(rooms);
-
             setColor(COLOR_YELLOW);
             cout << "\nSelect room number to add device to: ";
             setColor(COLOR_WHITE);
@@ -318,13 +320,13 @@ int main() {
             if (roomChoice < 1 || roomChoice > rooms.size()) {
                 setColor(COLOR_RED);
                 cout << "\n[ERROR] Invalid room number!" << endl;
-                setColor(COLOR_WHITE);
                 pressAnyKey();
                 break;
             }
 
             Room* targetRoom = rooms[roomChoice - 1];
 
+            // Choose device type
             setColor(COLOR_YELLOW);
             cout << "\nDevice types:" << endl;
             cout << "   1. Light" << endl;
@@ -335,22 +337,23 @@ int main() {
             setColor(COLOR_WHITE);
             int devType;
             cin >> devType;
-            cin.ignore();
+            cin.ignore(); // Clear the input buffer
 
             if (devType < 1 || devType > 4) {
                 setColor(COLOR_RED);
                 cout << "\n[ERROR] Invalid device type!" << endl;
-                setColor(COLOR_WHITE);
                 pressAnyKey();
                 break;
             }
 
+            // Name the device
             setColor(COLOR_YELLOW);
             cout << "Enter device name: ";
             setColor(COLOR_WHITE);
             string devName;
             getline(cin, devName);
 
+            // Create the selected device type
             cout << "\n";
             switch (devType) {
             case 1:
@@ -368,12 +371,11 @@ int main() {
             }
             setColor(COLOR_GREEN);
             cout << "[SAVED] New device added to " << targetRoom->getName() << endl;
-            setColor(COLOR_WHITE);
             pressAnyKey();
-            break;
         }
 
-        case 5: { // Add new room
+        // OPTION 5: Add a new room
+        else if (choice == 5) {
             clearScreen();
             setColor(COLOR_YELLOW);
             cout << "Enter new room name: ";
@@ -385,25 +387,22 @@ int main() {
             rooms.push_back(new Room(newRoom));
             setColor(COLOR_GREEN);
             cout << "\n[SAVED] Room '" << newRoom << "' added successfully!" << endl;
-            setColor(COLOR_WHITE);
             pressAnyKey();
-            break;
         }
 
-        case 6: { // Room control (all ON/OFF)
+        // OPTION 6: Turn all devices in a room ON or OFF at once
+        else if (choice == 6) {
             clearScreen();
 
             if (rooms.empty()) {
                 setColor(COLOR_RED);
                 cout << "\n[ERROR] No rooms available!" << endl;
-                setColor(COLOR_WHITE);
                 pressAnyKey();
                 break;
             }
 
-            // Display rooms with numbers
+            // Select room
             displayRooms(rooms);
-
             setColor(COLOR_YELLOW);
             cout << "\nSelect room number: ";
             setColor(COLOR_WHITE);
@@ -413,22 +412,20 @@ int main() {
             if (roomChoice < 1 || roomChoice > rooms.size()) {
                 setColor(COLOR_RED);
                 cout << "\n[ERROR] Invalid room number!" << endl;
-                setColor(COLOR_WHITE);
                 pressAnyKey();
                 break;
             }
 
             Room* targetRoom = rooms[roomChoice - 1];
 
-            // Check if room has devices
             if (targetRoom->getDevices().empty()) {
                 setColor(COLOR_RED);
                 cout << "\n[ERROR] No devices in this room!" << endl;
-                setColor(COLOR_WHITE);
                 pressAnyKey();
                 break;
             }
 
+            // Choose action for all devices
             setColor(COLOR_YELLOW);
             cout << "\n1. Turn ALL devices ON" << endl;
             cout << "2. Turn ALL devices OFF" << endl;
@@ -437,6 +434,7 @@ int main() {
             int action;
             cin >> action;
 
+            // Apply to every device in the room
             cout << "\n";
             if (action == 1) {
                 for (auto device : targetRoom->getDevices()) {
@@ -444,7 +442,6 @@ int main() {
                 }
                 setColor(COLOR_GREEN);
                 cout << "\n[SAVED] All devices in " << targetRoom->getName() << " turned ON" << endl;
-                setColor(COLOR_WHITE);
             }
             else if (action == 2) {
                 for (auto device : targetRoom->getDevices()) {
@@ -452,31 +449,27 @@ int main() {
                 }
                 setColor(COLOR_GREEN);
                 cout << "\n[SAVED] All devices in " << targetRoom->getName() << " turned OFF" << endl;
-                setColor(COLOR_WHITE);
             }
             else {
                 setColor(COLOR_RED);
                 cout << "[ERROR] Invalid choice!" << endl;
-                setColor(COLOR_WHITE);
             }
             pressAnyKey();
-            break;
         }
 
-        case 7: { // Apply Scene
+        // OPTION 7: Apply a preset scene (predefined settings)
+        else if (choice == 7) {
             clearScreen();
 
             if (rooms.empty()) {
                 setColor(COLOR_RED);
                 cout << "\n[ERROR] No rooms available!" << endl;
-                setColor(COLOR_WHITE);
                 pressAnyKey();
                 break;
             }
 
-            // Display rooms with numbers
+            // Select room
             displayRooms(rooms);
-
             setColor(COLOR_YELLOW);
             cout << "\nSelect room number: ";
             setColor(COLOR_WHITE);
@@ -486,13 +479,13 @@ int main() {
             if (roomChoice < 1 || roomChoice > rooms.size()) {
                 setColor(COLOR_RED);
                 cout << "\n[ERROR] Invalid room number!" << endl;
-                setColor(COLOR_WHITE);
                 pressAnyKey();
                 break;
             }
 
             Room* targetRoom = rooms[roomChoice - 1];
 
+            // Choose scene
             setColor(COLOR_YELLOW);
             cout << "\nAvailable Scenes:" << endl;
             cout << "   1. Good Morning" << endl;
@@ -505,6 +498,7 @@ int main() {
             int sceneChoice;
             cin >> sceneChoice;
 
+            // Convert number to scene name
             string sceneName;
             switch (sceneChoice) {
             case 1: sceneName = "Good Morning"; break;
@@ -514,34 +508,30 @@ int main() {
             default:
                 setColor(COLOR_RED);
                 cout << "\n[ERROR] Invalid scene!" << endl;
-                setColor(COLOR_WHITE);
                 pressAnyKey();
                 continue;
             }
 
             cout << "\n";
-            targetRoom->applyScene(sceneName);
+            targetRoom->applyScene(sceneName); // Room handles all device settings
             setColor(COLOR_GREEN);
             cout << "[SAVED] Scene applied to " << targetRoom->getName() << endl;
-            setColor(COLOR_WHITE);
             pressAnyKey();
-            break;
         }
 
-        case 8: { // Schedule Device
+        // OPTION 8: Schedule a device to turn ON/OFF at a specific time
+        else if (choice == 8) {
             clearScreen();
 
             if (rooms.empty()) {
                 setColor(COLOR_RED);
                 cout << "\n[ERROR] No rooms available!" << endl;
-                setColor(COLOR_WHITE);
                 pressAnyKey();
                 break;
             }
 
-            // Display rooms with numbers
+            // Select room
             displayRooms(rooms);
-
             setColor(COLOR_YELLOW);
             cout << "\nSelect room number: ";
             setColor(COLOR_WHITE);
@@ -551,25 +541,21 @@ int main() {
             if (roomChoice < 1 || roomChoice > rooms.size()) {
                 setColor(COLOR_RED);
                 cout << "\n[ERROR] Invalid room number!" << endl;
-                setColor(COLOR_WHITE);
                 pressAnyKey();
                 break;
             }
 
             Room* targetRoom = rooms[roomChoice - 1];
 
-            // Check if room has devices
             if (targetRoom->getDevices().empty()) {
                 setColor(COLOR_RED);
                 cout << "\n[ERROR] No devices in this room!" << endl;
-                setColor(COLOR_WHITE);
                 pressAnyKey();
                 break;
             }
 
-            // Display devices in selected room
+            // Select device to schedule
             displayDevicesInRoom(targetRoom);
-
             setColor(COLOR_YELLOW);
             cout << "\nSelect device number to schedule: ";
             setColor(COLOR_WHITE);
@@ -579,13 +565,13 @@ int main() {
             if (deviceChoice < 1 || deviceChoice > targetRoom->getDevices().size()) {
                 setColor(COLOR_RED);
                 cout << "\n[ERROR] Invalid device number!" << endl;
-                setColor(COLOR_WHITE);
                 pressAnyKey();
                 break;
             }
 
             SmartDevice* device = targetRoom->getDevices()[deviceChoice - 1];
 
+            // Get schedule time (24-hour format)
             setColor(COLOR_YELLOW);
             cout << "\nSchedule time (24h format):" << endl;
             cout << "Hour (0-23): ";
@@ -596,7 +582,6 @@ int main() {
             if (hour < 0 || hour > 23) {
                 setColor(COLOR_RED);
                 cout << "\n[ERROR] Hour must be 0-23!" << endl;
-                setColor(COLOR_WHITE);
                 pressAnyKey();
                 break;
             }
@@ -610,11 +595,11 @@ int main() {
             if (minute < 0 || minute > 59) {
                 setColor(COLOR_RED);
                 cout << "\n[ERROR] Minute must be 0-59!" << endl;
-                setColor(COLOR_WHITE);
                 pressAnyKey();
                 break;
             }
 
+            // Choose what to do at that time
             setColor(COLOR_YELLOW);
             cout << "\nAction:" << endl;
             cout << "   1. Turn ON" << endl;
@@ -630,12 +615,11 @@ int main() {
             targetRoom->scheduleAction(device->getName(), actionStr, hour, minute);
             setColor(COLOR_GREEN);
             cout << "[SAVED] Schedule created successfully" << endl;
-            setColor(COLOR_WHITE);
             pressAnyKey();
-            break;
         }
 
-        case 9: // Exit
+        // OPTION 9: Exit the program
+        else if (choice == 9) {
             clearScreen();
             setColor(COLOR_GREEN);
             cout << "======================================" << endl;
@@ -643,18 +627,20 @@ int main() {
             cout << "            Goodbye!" << endl;
             cout << "======================================" << endl;
             setColor(COLOR_WHITE);
-            break;
+        }
 
-        default:
+        // Invalid menu choice
+        else {
             setColor(COLOR_RED);
             cout << "\n[ERROR] Invalid choice! Please select 1-9." << endl;
             setColor(COLOR_WHITE);
             pressAnyKey();
         }
 
-    } while (choice != 9);
+    } while (choice != 9); // Keep running until user chooses Exit
 
-    // Clean up
+    // === CLEANUP ===
+    // Free memory to prevent memory leaks
     for (auto room : rooms) {
         delete room;
     }
