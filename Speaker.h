@@ -8,7 +8,7 @@ private:
     int volumeLevel;
 
 public:
-    // Constructor
+
     Speaker(string deviceName) : SmartDevice(deviceName, "SPEAKER") {
         volumeLevel = 50;   // default volume
     }
@@ -19,7 +19,7 @@ public:
         cout << "Speaker volume currently at " << volumeLevel << "%" << endl;
     }
 
-    // Show speaker status
+    // status
     void showStatus() override {
         SmartDevice::showStatus();
         cout << " | Speaker volume: " << volumeLevel << "%" << endl;
