@@ -1,38 +1,40 @@
-#include <iostream>
-#include <vector>
-#include <string>
+#ifndef THERMOSTAT_H
+#define THERMOSTAT_H
 
-using namespace std;
+#include "SmartDevice.h"
 
-//Thermostat Class
-	class Thermostat : public SmartDevice {
-	private:
-        int temperature;
+class Thermostat : public SmartDevice {
+private:
+    int temperature; // in celsius
 
+public:
+    Thermostat(string n) : SmartDevice(n, "THERMOSTAT") {
+        temperature = 22; // room temperature default
+    }
 
-	public:
-		Thermostat(string n) : SmartDevice(n, "Thermostat"){
-			temperature = 22.0;
-		}
+    void turnOn() {
+        SmartDevice::turnOn();
+        cout << "   Current temp: " << temperature << "°C" << endl;
+    }
 
-		
-		void setTemp(int temp) {
-			temperature = temp;
-			cout << name << "temperature set to" << temperature << endl;
-		}
+    string getStatus() override {
+        string status = SmartDevice::getStatus();
+        status += ", Temperature: " + to_string(temperature) + "°C";
+        return status;
+    }
 
-        void showStatus() {
-            SmartDevice::showStatus();
-            cout << ", Temperature: " << temperature << "°C" << endl;
+    void showStatus() {
+        cout << getStatus() << endl;
+    }
+
+    void adjust(int value) {
+        if (value < 10 || value > 35) {
+            cout << "[WARNING] Temperature must be 10-35°C!" << endl;
+            return;
         }
+        temperature = value;
+        cout << "Temperature set to " << temperature << "°C" << endl;
+    }
+};
 
-        //
-        void adjust(int value) {
-            if (value < 10 || value > 35) {
-                cout << "\x1B[31m[WARNING] Temperature must be 10-35°C!\x1B[0m" << endl;
-                return;
-            }
-            temperature = value;
-            cout << "Temperature set to " << temperature << "°C" << endl;
-        }
-    };
+#endif
