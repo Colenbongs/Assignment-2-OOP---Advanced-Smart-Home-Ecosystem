@@ -1,4 +1,3 @@
-```markdown
 # Smart Home Control System
 
 ## Project Overview
