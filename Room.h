@@ -15,6 +15,7 @@ public:
     }
 
     ~Room() {
+        // clean up devices when room is deleted
         for (auto device : devices) {
             delete device;
         }
@@ -47,7 +48,6 @@ public:
         }
     }
 
-    // NEW FEATURE 1: Apply scene to all devices in room
     void applyScene(string sceneName) {
         cout << "\nApplying '" << sceneName << "' scene to " << roomName << "..." << endl;
 
@@ -70,45 +70,44 @@ public:
         else if (sceneName == "Good Night") {
             for (auto device : devices) {
                 if (device->getType() == "LIGHT") {
-                    device->adjust(20);
+                    device->adjust(20); // dim lights
                 }
                 else if (device->getType() == "SPEAKER") {
-                    device->adjust(10);
+                    device->adjust(10); // low volume
                 }
                 else if (device->getType() == "CAMERA") {
-                    device->turnOn();
+                    device->turnOn(); // security on at night
                 }
             }
         }
         else if (sceneName == "Away") {
             for (auto device : devices) {
                 if (device->getType() != "CAMERA") {
-                    device->turnOff();
+                    device->turnOff(); // turn off everything except cameras
                 }
                 else {
-                    device->turnOn(); // Cameras stay on
+                    device->turnOn(); // cameras stay on for security
                 }
             }
         }
         else if (sceneName == "Movie Time") {
             for (auto device : devices) {
                 if (device->getType() == "LIGHT") {
-                    device->adjust(30);
+                    device->adjust(30); // dim lights
                 }
                 else if (device->getType() == "SPEAKER") {
                     device->turnOn();
-                    device->adjust(60);
+                    device->adjust(60); // medium volume
                 }
                 else if (device->getType() == "THERMOSTAT") {
                     device->turnOn();
-                    device->adjust(23);
+                    device->adjust(23); // comfortable temp
                 }
             }
         }
         cout << "Scene applied!" << endl;
     }
 
-    // NEW FEATURE 2: Schedule device action
     void scheduleAction(string deviceName, string action, int hour, int minute) {
         cout << "\n[SCHEDULED] " << deviceName << " will turn " << action
             << " at " << hour << ":" << (minute < 10 ? "0" : "") << minute << endl;
