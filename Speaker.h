@@ -5,30 +5,38 @@
 
 class Speaker : public SmartDevice {
 private:
-    int volume;
+    int volumeLevel;
 
 public:
-    Speaker(string n) : SmartDevice(n, "SPEAKER") {
-        volume = 50;
+
+    Speaker(string deviceName) : SmartDevice(deviceName, "SPEAKER") {
+        volumeLevel = 50;   /*default volume*/
     }
 
-    string getStatus() {
-        string status = SmartDevice::getStatus();
-        status += ", Volume: " + to_string(volume) + "%";
-        return status;
+    // Turn speaker on
+    void turnOn() override {
+        SmartDevice::turnOn();
+        cout << "Speaker volume currently at " << volumeLevel << "%" << endl;
     }
 
-    void showStatus() {
-        cout << getStatus() << endl;
+    // status
+    void showStatus() override {
+        SmartDevice::showStatus();
+        cout << " | Speaker volume: " << volumeLevel << "%" << endl;
     }
 
-    void adjust(int value) {
-        if (value < 0 || value > 100) {
-            cout << "Volume must be 0-100" << endl;
+    // Adjust volume
+    void adjust(int newVolume) override {
+
+        if (newVolume < 0 || newVolume > 100) {
+            cout << "[ERROR] Volume must be between 0 and 100." << endl;
             return;
         }
-        volume = value;
-        cout << "Volume now " << volume << "%" << endl;
+
+        volumeLevel = newVolume;
+
+        cout << name << " volume updated to "
+             << volumeLevel << "%" << endl;
     }
 };
 
