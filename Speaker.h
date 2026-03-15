@@ -10,7 +10,7 @@ private:
 public:
 
     Speaker(string deviceName) : SmartDevice(deviceName, "SPEAKER") {
-        volumeLevel = 50;   // default volume
+        volumeLevel = 50;   /*default volume*/
     }
 
     // Turn speaker on
